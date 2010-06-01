@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="ibkQoS">
+	<property environment="env"/>
+	<property name="ECLIPSE_HOME" value="../../../../../Applications/eclipse"/>
+	<property name="junit.output.dir" value="junit"/>
+	<property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.5"/>
+	<property name="source" value="1.5"/>
+	<path id="ibkQoS.classpath">
+		<pathelement location="bin"/>
+		<pathelement location="lib/junit-4.6.jar"/>
+		<pathelement location="lib/log4j-1.2.13.jar"/>
+		<pathelement location="lib/jchart.jar"/>
+		<!-- junit for Linux-->
+		<!--<pathelement location="/usr/share/java/junit4-4.3.1.jar"/>-->
+		<!--<pathelement location="/usr/share/java/junit4.jar"/>-->
+		<!-- junit for MACOS -->
+		<!--<pathelement location="../../../../eclipse/plugins/org.junit4_4.3.1/junit.jar"/>-->
+		<!-- junit for Windows -->
+		<!--<pathelement location="C:/Programme/eclipse/eclipse/plugins/org.junit4_4.3.1/junit.jar"/>-->
+	</path>
+	<target name="init">
+		<mkdir dir="bin"/>
+		<copy includeemptydirs="false" todir="bin">
+			<fileset dir="src" excludes="**/*.launch, **/*.java"/>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete dir="bin"/>
+	</target>
+	<target depends="clean" name="cleanall"/>
+	<target depends="build-subprojects,build-project" name="build"/>
+	<target name="build-subprojects"/>
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+		<javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}">
+			<src path="src"/>
+			<classpath refid="ibkQoS.classpath"/>
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+		<copy todir="${ant.library.dir}">
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+		</copy>
+		<unzip dest="${ant.library.dir}">
+			<patternset includes="jdtCompilerAdapter.jar"/>
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+		</unzip>
+	</target>
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+		<antcall target="build"/>
+	</target>
+	<target name="AVPFactoryTest">
+		<mkdir dir="${junit.output.dir}"/>
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml"/>
+			<test name="at.ac.tuwien.ibk.biqini.junit.diameter.AVPFactoryTest" todir="${junit.output.dir}"/>
+			<classpath refid="ibkQoS.classpath"/>
+		</junit>
+	</target>
+	<target name="junitreport">
+		<junitreport todir="${junit.output.dir}">
+			<fileset dir="${junit.output.dir}">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report format="frames" todir="${junit.output.dir}"/>
+		</junitreport>
+	</target>
+	<target name="jarPDP" depends="build">
+		<jar destfile="PDP.jar" basedir="bin">
+			<zipfileset src="lib/log4j-1.2.13.jar"/>
+			<manifest>
+				<!-- Who is building this jar? -->
+				<attribute name="Built-By" value="${user.name}"/>
+				<!-- Information about the program itself -->
+				<attribute name="Implementation-Vendor" value="Institute of Broadband Communications."/>
+				<attribute name="Implementation-Title" value="Policy Decision Point"/>
+				<attribute name="Implementation-Version" value="1.0.0"/>
+				<attribute name="Main-Class" value="at.ac.tuwien.ibk.biqini.pdp.PDPApplicationTest"/>
+			</manifest>
+		</jar>
+	</target>
+	<target name="jarPEP" depends="build">
+		<jar destfile="PEP.jar" basedir="bin">
+			<fileset dir="lib"/>
+			<zipfileset src="lib/log4j-1.2.13.jar"/>
+			<zipfileset src="lib/jchart.jar"/>
+			<manifest>
+				<!-- Who is building this jar? -->
+				<attribute name="Built-By" value="${user.name}"/>
+				<!-- Information about the program itself -->
+				<attribute name="Implementation-Vendor" value="Institute of Broadband Communications."/>
+				<attribute name="Implementation-Title" value="Policy Enforcment Point"/>
+				<attribute name="Implementation-Version" value="1.0.0"/>
+				<attribute name="Main-Class" value="at.ac.tuwien.ibk.biqini.pep.PEPApplication"/>
+			</manifest>
+		</jar>
+	</target>
+</project>

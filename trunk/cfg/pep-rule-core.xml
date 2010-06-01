@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pep-rule-config>
+	<common-config>
+		
+		<!--defines if all unclassified traffic should be blocked-->
+		<gateblocking blockallGates="false"/>
+		
+		<!--defines the queuesize of the single Flows -->
+		<!--<queuesize enable="true" size="1000" count="packets"/>-->
+		<queuesize enable="true" size="100000" count="bytes"/>
+		<!--<queuesize enable="false"/>-->
+		
+		<!-- desribes the logging output -->
+		<logging info="false" diameterMessages="true"/>
+		
+		<!-- configures the Systemcall behaviour -->
+		<CommandExecution emulate="false" debug="true"/>  
+		
+		<!-- configures the interfaces -->
+		<!-- accepts M k with or without Bit postfix (only integers!)-->
+		<interface name="core" bandwidth="10M" direction="in"/>  
+		<interface name="access" bandwidth="10M" direction="out"/>  
+		
+		<!-- configures the mapping between QCI to DSCP-->
+		<DSCP_mapping>
+			<entry QCI="1" DSCP="0x12"/>
+			<entry QCI="2" DSCP="0xFF"/>
+		</DSCP_mapping>
+		
+		<!-- select the tc queue identifier -->
+		<!-- no modifications useful, support up to 900 simultanous duplex streams -->
+		<TC_IDs defaultid="7000" startid="7100" stopid="8000" />
+		
+		<!-- example ruleset for Died traffic -->
+		<!-- only integers accepted, postfixes k, M -->
+		<unclassified-traffic min="5k" max="20k"/>
+		
+		<!-- intervall to check the bandwidth -->
+		<!-- only integers accepted, postfixes msec, sec -->
+		<bandwidthUsageLogging intervall="1sec"/>
+		
+		<!-- alway expires after a certain amount of time -->
+		<!-- experimental -->
+		<expires supported="false" automatic="true" timeout="2min"/>
+		
+	</common-config>
+
+	<predefined-rules>
+		<!-- example ruleset for SSH server in the Core network -->
+		<!-- active: default (always on), ready (waiting for activation)-->
+		<rule name="ssh" QCI="1" active="default">
+			<uplink GuaranteedBitrate="1M" MaxRequestedBandwidth="1.1M">
+				permit in 6 from 0.0.0.0 to 0.0.0.0 22
+			</uplink>
+			<downlink GuaranteedBitrate="1M" MaxRequestedBandwidth="1.1M">
+				permit out 6 from 0.0.0.0 22 to 0.0.0.0
+			</downlink>
+		</rule>	
+		
+		<!-- example ruleset for SIP signalling (server within the Core network) -->
+		<rule name="sip" QCI="1" active="default">
+			<uplink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+				permit in ip from 0.0.0.0 to 0.0.0.0 5060
+			</uplink>
+			<downlink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+				permit out ip from 0.0.0.0 5060 to 0.0.0.0
+			</downlink>
+		</rule>	
+
+		<!-- example ruleset for DIAMETER signalling (server within the Core network) -->
+		<rule name="diameter" QCI="1" active="default">
+			<uplink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+				permit in ip from 0.0.0.0 to 0.0.0.0 3868
+			</uplink>
+			<downlink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+				permit out ip from 0.0.0.0 3868 to 0.0.0.0
+			</downlink>
+		</rule>	
+				
+		<!-- example ruleset for DNS -->
+		<rule name="dns" QCI="1" active="default">
+			<uplink GuaranteedBitrate="10k" MaxRequestedBandwidth="200k">
+				permit in 6 from 0.0.0.0 to 0.0.0.0 53
+			</uplink>
+			<downlink GuaranteedBitrate="10k" MaxRequestedBandwidth="200k">
+				permit out 6 from 0.0.0.0 53 to 0.0.0.0
+			</downlink>
+		</rule>	
+	</predefined-rules>
+</pep-rule-config>

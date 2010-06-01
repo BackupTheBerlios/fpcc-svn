@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DiameterPeer
+		FQDN="pep-user.open-ims.test" 
+		Realm="open-ims.test" 
+		Vendor_Id="10415" 
+		Product_Name="JavaDiameterPeer"	
+		AcceptUnknownPeers="1" 
+		DropUnknownOnDisconnect="1" 
+		Tc="10" 
+		Workers="8" 
+		QueueLength="32">
+	<Acceptor port="3868"/>
+	<Auth id="16777216" vendor="10415"/>
+	<Auth id="16777216" vendor="0" />
+	<Acct id="16777216" vendor="0" />
+	
+</DiameterPeer>

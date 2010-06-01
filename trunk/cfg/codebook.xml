@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<codecs>
+	<codec encodingName="PCMU" payloadType="0" type="audio" clockrate="8000" channels="1" bandwidth="87200"/>
+	<codec encodingName="GSM" payloadType="3" type="audio" clockrate="8000" channels="1" bandwidth="29200"/>
+	<codec encodingName="G723" payloadType="4" type="audio" clockrate="8000" channels="1" bandwidth="21900"/>
+	<codec encodingName="DVI4" payloadType="5" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="DVI4" payloadType="6" type="audio" clockrate="16000" channels="1"/>
+	<codec encodingName="LPC" payloadType="7" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="PCMA" payloadType="8" type="audio" clockrate="8000" channels="1" bandwidth="87200"/>
+	<codec encodingName="G722" payloadType="9" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="L16" payloadType="10" type="audio" clockrate="44100" channels="1"/>
+	<codec encodingName="L16" payloadType="11" type="audio" clockrate="44100" channels="2"/>
+	<codec encodingName="QCELP" payloadType="12" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="CN" payloadType="13" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="MPA" payloadType="14" type="audio" clockrate="90000" channels="1"/>
+	<codec encodingName="G728" payloadType="15" type="audio" clockrate="8000" channels="1" bandwidth="31500"/>
+	<codec encodingName="DVI4" payloadType="16" type="audio" clockrate="11025" channels="1"/>
+	<codec encodingName="DVI4" payloadType="17" type="audio" clockrate="22050" channels="1"/>
+	<codec encodingName="G729" payloadType="18" type="audio" clockrate="8000" channels="1" bandwidth="31200"/>
+	
+	<codec encodingName="CelB" payloadType="25" type="video" clockrate="90000"/>
+	<codec encodingName="JPEG" payloadType="26" type="video" clockrate="90000"/>
+	<codec encodingName="nv" payloadType="28" type="video" clockrate="90000"/>
+	<codec encodingName="H261" payloadType="31" type="video" clockrate="90000"/>
+	<codec encodingName="MPV" payloadType="32" type="video" clockrate="90000"/>
+	<codec encodingName="MP2T" payloadType="33" type="video" clockrate="90000"/>
+	<codec encodingName="H263" payloadType="34" type="video" clockrate="90000"/>
+    <codec encodingName="H263-1998" type="video" clockrate="90000" bandwidth="500000"/>
+
+	<codec encodingName="H264" clockrate="90000" type="video" bandwidth="1000000"/>
+	<codec encodingName="cv" clockrate="9000" type="video" bandwidth="15000000"/>
+	<codec encodingName="ca" clockrate="48000" type="audio" channels="6" bandwidth="900000"/>	
+    
+    <codec encodingName="ac3" clockrate="9000" type="audio" bandwidth="512000"/>
+    <codec encodingName="MP4V-ES" clockrate="9000" type="video" bandwidth="15000000"/>
+
+	<codec encodingName="partityfec" type="application"/>
+	<codec encodingName="rtx" type="application"/>
+	
+	<codec encodingName="AMR" type="audio" clockrate="8000"/>
+	<codec encodingName="AMR-WB" type="audio" clockrate="16000"/>
+	<codec encodingName="DAT12" type="audio"/>
+	<codec encodingName="dsr-es201108" type="audio"/>
+	<codec encodingName="EVRC" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="EVRC0" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="EVRC1" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="EVRCB" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="EVRCB0" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="EVRCB1" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="EVRCWB" type="audio"/>
+	<codec encodingName="EVRCWB0" type="audio"/>
+	<codec encodingName="EVRCWB1" type="audio"/>
+	<codec encodingName="G7221" type="audio" clockrate="16000" channels="1"/>
+	<codec encodingName="G726-16" type="audio" clockrate="8000" channels="1" bandwidth="392000"/>
+	<codec encodingName="G726-24" type="audio" clockrate="8000" channels="1" bandwidth="472000"/>
+	<codec encodingName="G726-32" type="audio" clockrate="8000" channels="1" bandwidth="552000"/>
+	<codec encodingName="G726-40" type="audio" clockrate="8000" channels="1" bandwidth="632000"/>
+	<codec encodingName="G729D" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="G729E" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="GSM-EFR" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="L8" type="audio"/>
+	<codec encodingName="RED" type="audio"/>
+	<codec encodingName="rtx" type="audio"/>
+	<codec encodingName="VDVI" type="audio"/>
+	<codec encodingName="L20" type="audio"/>
+	<codec encodingName="L24" type="audio"/>
+	<codec encodingName="MP4A-LATM" type="audio"/>
+	<codec encodingName="mpa-robust" type="audio" clockrate="90000"/>
+	<codec encodingName="parityfec" type="audio"/>
+	<codec encodingName="SMV" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="SMV0" type="audio" clockrate="8000" channels="1"/>
+	<codec encodingName="t140c" type="audio"/>
+	<codec encodingName="t38" type="audio"/>
+	<codec encodingName="telephone-event" type="audio"/>
+	<codec encodingName="tone" type="audio"/>
+	
+	<codec encodingName="parityfec" type="text"/>
+	<codec encodingName="red" type="text" clockrate="1000"/>
+	<codec encodingName="rtx" type="text"/>
+	<codec encodingName="t140" type="text" clockrate="1000"/>
+	
+	<codec encodingName="BMPEG" type="video" clockrate="90000"/>
+	<codec encodingName="BT656" type="video" clockrate="90000"/>
+	<codec encodingName="DV" type="video" clockrate="90000"/>
+	<codec encodingName="H263-1998" type="video" clockrate="90000" bandwidth="430000"/>
+	<codec encodingName="H263-2000" type="video" clockrate="90000" bandwidth="430000"/>
+	<codec encodingName="MP1S" type="video" clockrate="90000"/>
+	<codec encodingName="MP2P" type="video" clockrate="90000"/>
+	<codec encodingName="MP4V-ES" type="video" clockrate="90000"/>
+	<codec encodingName="parityfec" type="video"/>
+	<codec encodingName="pointer" type="video" clockrate="90000"/>
+	<codec encodingName="raw" type="video" clockrate="90000"/>
+	<codec encodingName="rtx" type="video"/>
+	<codec encodingName="SMPTE292M" type="video"/>
+	<codec encodingName="vc1" type="video" clockrate="90000"/>
+	
+</codecs>

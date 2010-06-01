@@ -1,0 +1,259 @@
+The PEP needs two configuration files for the following purpose:
+\begin{itemize}
+	\item Diameter peer configuration
+	\item Enforcement settings
+\end{itemize}
+A major perquisite of the PEP is the correct interface configuration.
+This is described in the next section.
+%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Interface configuration}
+The system needs at least two interface cards, one for the user and one for the core side. 
+These interface cards should not have IP addresses assigned, but should be configured as bridge by means of the bridge control tool (brctl). Afterwards the bridge has to be configured with an IP address where the PDP can send its requests to.
+
+The following script does the neccessary configuration:
+
+\begin{lstlisting}[caption=Example of a PEP Enforcement Setting, label={lst:PEPBridgeConf}]
+#!/bin/sh
+
+#Remove the IP addresses
+sudo ifconfig eth0 0.0.0.0
+sudo ifconfig eth1 0.0.0.0
+
+#Create a bridge
+sudo brctl addbr bridge
+
+#Add interfaces to the bridge
+sudo brctl addif bridge eth0
+sudo brctl addif bridge eth1
+ 
+#Configure an IP address  for the bridge
+sudo ifconfig bridge x.x.x.x netmask y.y.y.y
+
+#Bring up the bridge interface
+sudo ifconfig bridge up
+\end{lstlisting}
+
+%%TODO more details and references
+
+\subsubsection{Diameter peer configuration}
+The configuration of the PEP Diameter stack follows the guidelines of the PDP section, with minor modifications. The PEP is awaiting the connection from the PDP, so we do not need to configure the diameter peer parameters of the PDP.
+
+The following example fulfills all requirements:
+
+\lstset{language=xml,keywords={DiameterPeer,Acceptor,Auth,Acct,Peer},emph={FQDN, Realm, Vendor_Id, Product_Name, AcceptUnknownPeers, DropUnknownOnDisconnect,id,vendor},keywordstyle=\color{red},emphstyle=\color{blue}}
+\begin{lstlisting}[caption=Example of a Diameter Peer configuration file, label={lst:DiamPeerCfgPEP}]
+<?xml version="1.0" encoding="UTF-8"?>
+<DiameterPeer
+		FQDN="pep.open-ims.test" 
+		Realm="open-ims.test" 
+		Vendor_Id="10415" 
+		Product_Name="JavaDiameterPeer">
+	<Acceptor port="3868"/>
+	<Auth id="16777216" vendor="10415"/>
+	<Auth id="16777216" vendor="0" />
+	<Acct id="16777216" vendor="0" />
+</DiameterPeer>
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Enforcement settings}
+In this part we explain the settings of the QoS enforcement part at the PEP, what is also done within an XML file. 
+This file has two parts, one for general settings, and one for predefined rules, that can be activated at startup of the PEP, or later through the PDP.
+
+\lstset{
+	language=xml,
+	keywords={pep-rule-config,common-config,predefined-rules,gateblocking,queuesize,logging,CommandExecution,interface,DSCP_mapping,unclassified-traffic, bandwidthUsageLogging, entry,expires, rule, uplink, downlink,TC_IDs },
+	emph={blockallGates, enable, size, count, info, diameterMessages, emulate, name, bandwidth, direction, QCI, DSCP, debug, defaultid, startid, stopid, min, max, intervall, supported, automatic, timeout, active, GuaranteedBitrate,MaxRequestedBandwidth},
+	keywordstyle=\color{red},
+	emphstyle=\color{blue},
+	alsodigit={-}
+	}
+
+The PEP blocks all unclassified traffic, when the following configuration is used:
+\begin{lstlisting}[caption=Activation of Gateblocking, label={lst:PEPGate}]
+	<gateblocking blockallGates="true"/>
+\end{lstlisting}
+To allow unclassified traffic blockallGates has to be changed to false.
+
+The capacity of the queues of the queueing systems on the uplink and downlink interfaces can be configured by means of bytes or packets.
+The following example illustrates a queue which stores up to 100kBytes.
+\begin{lstlisting}[caption=Queue with 100kBytes, label={lst:PEPContainer}]
+	<queuesize enable="true" size="100000" count="bytes"/>
+\end{lstlisting}
+The next listing depicts a queue which can store up to 100 packets
+\begin{lstlisting}[caption=Queue with 100 packets, label={lst:PEPContainer}]	
+	<queuesize enable="true" size="100" count="packets"/>
+\end{lstlisting}
+
+The next setting configures the logging, which is sent to the console.
+The info setting logs actions that are performed at the PEP, the diameterMessages setting logs the arrival and departure of diameter messages.
+\begin{lstlisting}[caption=Enable Logging, label={lst:PEPContainer}]	
+	<logging info="true" diameterMessages="true"/> 
+\end{lstlisting}
+
+The PEP can also be used as 'dummy' on an arbitrary system (e.g., when not enough interface cards are available and/or the operating system is not Linux).
+The setting emulate="true" prevents the PEP from executing system calls, what is e.g., useful for debugging.
+The setting debug="true" prints all system commands to the console.
+\begin{lstlisting}[caption=Enable Emulation, label={lst:PEPContainer}]	
+	<CommandExecution emulate="true" debug="true"/>  
+\end{lstlisting}
+
+The following settings configure the interfaces to be used for uplink (in) and downlink (out) direction, as well as for the absolute assigned bandwidth.
+The interface names have to be the names given in the system, e.g.,  eth0 or eth1.
+\begin{lstlisting}[caption=Interface configuration, label={lst:PEPContainer}]	
+	<interface name="eth1" bandwidth="10M" direction="in"/>  
+	<interface name="eth0" bandwidth="10M" direction="out"/>  
+\end{lstlisting}
+
+The PEP is able to mark the packets by means of DSCP. This marking depends on the QCI parameter from the PDP. 
+The section DSCP\_mapping stores a translation from QCI values to DSCP marks. 
+For example the following snap illustrates a mapping where streams with the QCI value of 1 are marked with 0x12 in the DSCP filed and with 0xFF if the stream belongs to a QCI  value of 2.
+\begin{lstlisting}[caption=DSCP mapping, label={lst:PEPContainer}]	
+	<DSCP_mapping>
+		<entry QCI="1" DSCP="0x12"/>
+		<entry QCI="2" DSCP="0xFF"/>
+	</DSCP_mapping>
+\end{lstlisting}
+
+The TC\_IDs describe the queue ids for the default queue and the dynamically installed queues. Theses values should not be changed. In rare cases, where more then 450 parallel streams are handled, it might be a good idea to increase the stopid value.
+\begin{lstlisting}[caption=TC ids, label={lst:PEPContainer}]	
+	<TC_IDs defaultid="7000" startid="7100" stopid="8000" />
+\end{lstlisting}
+
+The setting unclassified-traffic sets the maximum bandwidth allocation to traffic that can not be mapped to a rule. 
+The min and max parameter represent the minimal guaranteed bitrate and the maximal bitrate for unclassified traffic. 
+The following example configuration line sets a bitrate of 5kbit/sec up to 20kbit/sec for unclassified traffic. 
+Only integers are allowed for describing the bitrate. So 1600k is allowed to describe 1600 kBit/sec, whereas 1.6M will not be accepted by the parser. 
+\begin{lstlisting}[caption=Bitrates for unclassified traffic, label={lst:PEPContainer}]	
+	<unclassified-traffic min="5k" max="20k"/>
+\end{lstlisting}
+
+The PEP allows to observe the current used bandwidth. 
+The following configuration line sets the interval for measuring the current bandwidth usage of each single stream.
+\begin{lstlisting}[caption=bandwidth usage intervall logging, label={lst:PEPContainer}]	
+	<bandwidthUsageLogging intervall="1sec"/>
+\end{lstlisting}
+
+The expire configuration (experimental!) describes the maximum duration of a rule when soft state configuration is used. 
+Rules that are not updated within this time are automatically deleted. 
+\begin{lstlisting}[caption=expires configuration, label={lst:PEPContainer}]	
+	<expires supported="false" automatic="true" timeout="2min"/>
+\end{lstlisting}
+
+In the following section we describe predefined rules, which are configured after startup of the PEP. 
+These rules can be activated immediately (active="default") or only be configured and activated later by the PDP (active="ready").
+
+The next configuration line illustrates a predefined rule for SIP traffic, named SIP.
+\begin{lstlisting}[caption=predefined rule for SIP, label={lst:PEPContainer}]	
+<rule name="sip" QCI="1" active="ready">
+	<uplink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+		permit in ip from 0.0.0.0 to 0.0.0.0 5060
+	</uplink>
+	<downlink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+		permit out ip from 0.0.0.0 5060 to 0.0.0.0
+	</downlink>
+</rule>	
+\end{lstlisting}
+
+In this rule we assign the QCI value of 1 to all IP packets that follow the same patterns as described below. 
+The keyword default indicates that this rule is activated after startup.
+The guaranteed bit rate, which is always reserved for this stream, is configured with separate lines for uplink and downlink. 
+MaxRequestedBandwidth is the bandwidth that this stream can use maximal, but this is not guaranteed. 
+Within each downlink and uplink line is the ipfilter rule that describes the pattern of the ip traffic that belongs to this rule.
+
+We hardly recommend to configure at least rules for SIP, Diameter and DNS. 
+Only in cases where it is clear that non of these protocols traverse the PEP, the rules should be removed. 
+In scenarios, where two PEPs are used and Diameter rules are not activated, the Diameter traffic is handled as unclassified traffic and has to compete with other unclassified traffic.
+In cases where UDP is used for unclassified traffic, the diameter traffic will starve and no communication to the PEP is possible anymore.
+
+The following listing summarizes all configuration lines.
+\begin{lstlisting}[caption=Example of a PEP Enforcement Setting, label={lst:PEPContainer}]
+<?xml version="1.0" encoding="UTF-8"?>
+<pep-rule-config>
+  <common-config>
+    <gateblocking blockallGates="false"/>
+    <queuesize enable="true" size="100000" count="bytes"/>
+    <logging info="false" diameterMessages="true"/>
+    <CommandExecution emulate="true" debug="true"/>  
+    <interface name="eth1" bandwidth="10M" direction="in"/>  
+    <interface name="eth0" bandwidth="10M" direction="out"/>  
+    <DSCP_mapping>
+      <entry QCI="1" DSCP="0x12"/>
+      <entry QCI="2" DSCP="0xFF"/>
+    </DSCP_mapping>
+    <TC_IDs defaultid="7000" startid="7100" stopid="8000" />
+    <unclassified-traffic min="5k" max="20k"/>
+    <bandwidthUsageLogging intervall="1sec"/>
+    <expires supported="false" automatic="true" timeout="2min"/>
+  </common-config>
+
+  <predefined-rules>
+  <rule name="ssh" QCI="1" active="ready">
+    <uplink GuaranteedBitrate="1M" MaxRequestedBandwidth="1.1M">
+      permit in 6 from 0.0.0.0 to 0.0.0.0 22
+    </uplink>
+    <downlink GuaranteedBitrate="1M" MaxRequestedBandwidth="1.1M">
+      permit out 6 from 0.0.0.0 22 to 0.0.0.0
+    </downlink>
+  </rule>
+  <rule name="sip" QCI="1" active="default">
+    <uplink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+      permit in ip from 0.0.0.0 to 0.0.0.0 5060
+    </uplink>
+    <downlink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+      permit out ip from 0.0.0.0 5060 to 0.0.0.0
+    </downlink>
+  </rule>
+  <rule name="diameter" QCI="1" active="default">
+    <uplink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+      permit in ip from 0.0.0.0 to 0.0.0.0 3868
+    </uplink>
+    <downlink GuaranteedBitrate="100k" MaxRequestedBandwidth="500k">
+      permit out ip from 0.0.0.0 3868 to 0.0.0.0
+    </downlink>
+  </rule>
+  <rule name="dns" QCI="1" active="default">
+    <uplink GuaranteedBitrate="10k" MaxRequestedBandwidth="200k">
+      permit in 6 from 0.0.0.0 to 0.0.0.0 53
+    </uplink>
+    <downlink GuaranteedBitrate="10k" MaxRequestedBandwidth="200k">
+      permit out 6 from 0.0.0.0 53 to 0.0.0.0
+    </downlink>
+  </rule>
+</predefined-rules>
+</pep-rule-config>
+	
+\end{lstlisting}
+
+The PEP can be started with the following command line. 
+
+\begin{lstlisting}[caption=Example of a PEP Enforcement Setting, label={lst:PEPContainer}]
+sudo java -jar PEP.jar diameter_cfg.xml pep_rule_config.xml
+\end{lstlisting}
+
+\subsubsection{Common problems}
+The following section describes problems and pitfalls we had during our tests.
+Some configuration parameters are often the root of misconfiguration and unexpected behavior. 
+In these cases we recommend to activate all logging and to read the responses carefully. We summarize here some common known misconfigurations.
+
+\begin{itemize}
+	\item Please ensure that you provide both configuration files and that you run the application as root. 
+	The PEP configures queueing disciplines and firewall settings what requires root privileges.
+
+	\item After starting the application, it is possible to change the configured logging or to observe the active rules and their current as their consumed bandwidth.
+	
+	\item In the case that all rules are successfully received and a successful response was sent back, but the enforcement does not work correctly as expected, make sure that the PEP application was started as root and the PEP was able to configure the tc and IPtable commands. If the application has no root privileges the application can not modify queueing and firewall parameters.
+
+	\item If the application has the correct privileges and the enforcement works properly, but the application does not show any traffic through the rules, or traffic which passes is marked as unclassified traffic, whereas the patterns as IP addresses and ports are correct. The most common reason for this problem is that the uplink and downlink interface names are swapped.
+
+	\item In cases where the rule is installed, but no rule or only some rules are found in the active rule list, please read the diameter response message carefully and check the free bandwidth. 
+	The most likely reason for this problem is insufficient free bandwidth. 
+	Another reason might be that the PDP requests only uplink or downlink rules.
+
+	\item If the PEP introduces too much delay for the traffic, the reason might be that the current usage is higher than the reserved or max requested bandwidth. 
+	Check the current bandwidth usage and reconfigure your PDP. 
+	High delays can also be an indication for a too long queue.
+	Shorter queues lead to higher drop rates, but lower delay values.
+	Note the current implementation allows no separate queuelength configuration for different QCI classes and bandwidth, so that the maximum delay can be configured through the QCI class.
+\end{itemize}

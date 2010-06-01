@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PEPContainer>
+	<PEP ip="192.168.1.50" domain="open-ims.test" upbw="20000" dobw="20000">
+		<User ip="192.168.1.90"/>
+        <User ip="192.168.1.91"/>
+	</PEP>
+	<PEP ip="192.168.1.51" domain="open-ims.test" upbw="200000000" dobw="200000000">
+		<User ip="192.168.1.92"/>
+        <User ip="192.168.1.93"/>
+	</PEP>
+</PEPContainer>
