@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Common problems</TITLE>
+<META NAME="description" CONTENT="Common problems">
+<META NAME="keywords" CONTENT="BIQINI">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="BIQINI.css">
+
+<LINK REL="previous" HREF="node22.html">
+<LINK REL="up" HREF="node19.html">
+<LINK REL="next" HREF="node24.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html361"
+  HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html357"
+  HREF="node19.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html353"
+  HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html359"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html362"
+  HREF="node24.html">Application Function</A>
+<B> Up:</B> <A NAME="tex2html358"
+  HREF="node19.html">Policy Enforcement Point</A>
+<B> Previous:</B> <A NAME="tex2html354"
+  HREF="node22.html">Enforcement settings</A>
+ &nbsp; <B>  <A NAME="tex2html360"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00532400000000000000">
+Common problems</A>
+</H3>
+The following section describes problems and pitfalls we had during our tests.
+Some configuration parameters are often the root of misconfiguration and unexpected behavior. 
+In these cases we recommend to activate all logging and to read the responses carefully. We summarize here some common known misconfigurations.
+
+<P>
+
+<UL>
+<LI>Please ensure that you provide both configuration files and that you run the application as root. 
+	The PEP configures queueing disciplines and firewall settings what requires root privileges.
+
+<P>
+</LI>
+<LI>After starting the application, it is possible to change the configured logging or to observe the active rules and their current as their consumed bandwidth.
+
+<P>
+</LI>
+<LI>In the case that all rules are successfully received and a successful response was sent back, but the enforcement does not work correctly as expected, make sure that the PEP application was started as root and the PEP was able to configure the tc and IPtable commands. If the application has no root privileges the application can not modify queueing and firewall parameters.
+
+<P>
+</LI>
+<LI>If the application has the correct privileges and the enforcement works properly, but the application does not show any traffic through the rules, or traffic which passes is marked as unclassified traffic, whereas the patterns as IP addresses and ports are correct. The most common reason for this problem is that the uplink and downlink interface names are swapped.
+
+<P>
+</LI>
+<LI>In cases where the rule is installed, but no rule or only some rules are found in the active rule list, please read the diameter response message carefully and check the free bandwidth. 
+	The most likely reason for this problem is insufficient free bandwidth. 
+	Another reason might be that the PDP requests only uplink or downlink rules.
+
+<P>
+</LI>
+<LI>If the PEP introduces too much delay for the traffic, the reason might be that the current usage is higher than the reserved or max requested bandwidth. 
+	Check the current bandwidth usage and reconfigure your PDP. 
+	High delays can also be an indication for a too long queue.
+	Shorter queues lead to higher drop rates, but lower delay values.
+	Note the current implementation allows no separate queuelength configuration for different QCI classes and bandwidth, so that the maximum delay can be configured through the QCI class.
+</LI>
+</UL>
+		
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html361"
+  HREF="node24.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html357"
+  HREF="node19.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html353"
+  HREF="node22.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html359"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html362"
+  HREF="node24.html">Application Function</A>
+<B> Up:</B> <A NAME="tex2html358"
+  HREF="node19.html">Policy Enforcement Point</A>
+<B> Previous:</B> <A NAME="tex2html354"
+  HREF="node22.html">Enforcement settings</A>
+ &nbsp; <B>  <A NAME="tex2html360"
+  HREF="node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Christoph
+2010-06-02
+</ADDRESS>
+</BODY>
+</HTML>

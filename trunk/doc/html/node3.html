@@ -1,0 +1,170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>QoS Enforcement Architectures and Tools</TITLE>
+<META NAME="description" CONTENT="QoS Enforcement Architectures and Tools">
+<META NAME="keywords" CONTENT="BIQINI">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="BIQINI.css">
+
+<LINK REL="next" HREF="node4.html">
+<LINK REL="previous" HREF="node2.html">
+<LINK REL="up" HREF="BIQINI.html">
+<LINK REL="next" HREF="node4.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html90"
+  HREF="node4.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html86"
+  HREF="BIQINI.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html80"
+  HREF="node2.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html88"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html91"
+  HREF="node4.html">Architecture</A>
+<B> Up:</B> <A NAME="tex2html87"
+  HREF="BIQINI.html">BIQINI</A>
+<B> Previous:</B> <A NAME="tex2html81"
+  HREF="node2.html">Motivation</A>
+ &nbsp; <B>  <A NAME="tex2html89"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00300000000000000000">
+QoS Enforcement Architectures and Tools</A>
+</H1>
+Having recognized that the promotion of three diverging IMS standards for mobile, fixed and cable networks, respectively, entails the severe danger of an overall IMS failure, 3GPP has agreed in 2007 together with other involved standards organizations, notably ETSI TISPAN for fixed networks and PacketCable for cable networks, to harmonize their corresponding standardization activities. Starting with 3GPP Release 8, the 3GPP therefore develops and promotes a Common IMS architecture which conforms to the requirements of all three standardization bodies, whereas in 3GPP Release 7, main QoS-related interfaces (reference points), particularly Rx/Gx for 3GPP and Gq'/Re for the Resource and Admission Control Subsystem (RACS), are not yet harmonized.
+
+<P>
+As a consequence, the 3GPP Release 7 PCC compliant BIQINI architecture aims at merging the commonalities of the 3GPP and TISPAN architectures towards the framework for policy based admission control [#!rfc2753!#], which has been defined by the IETF as shown in Figure <A HREF="#fig:IETFArch">2.1</A>. Here, the Application Function (AF) is positioned within the SIP signaling path, having access to all requests for certain services along with their detailed media descriptions. The AF is responsible to query the Policy Decision Point (PDP), which decides if a specific request is granted or rejected, depending on policies, rules, request information and user profile(s). In case the service request is granted, a request with rules that should be activated is sent to the Policy Enforcement Point (PEP). The PEP enables the requested service flow according to the specifications sent by the PDP.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:IETFArch"></A><A NAME="94"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2.1:</STRONG>
+IETF Architecture of Policy-based Admission Control</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="247" HEIGHT="188" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/IETFArch.png"
+ ALT="Image IETF_ARCH">
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+As far as NGN QoS enforcement is concerned, the standardization bodies 3GPP, (targeting mobile networks) and ETSI TISPAN (focusing on fixed NGN networks) have designed their own architectures, depending on the particular access network requirements. In the case of 3GPP, this architecture is called Policy and Charging Control (PCC) [#!3gpp.23.203!#]. Figure <A HREF="#fig:3GPPArch">2.2</A>	depicts main functions in this architecture which can be easily mapped to layers and functions in the previously presented IETF architecture.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:3GPPArch"></A><A NAME="103"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2.2:</STRONG>
+3GPP PCC Architecture</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="247" HEIGHT="188" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/3GPPArch.png"
+ ALT="Image 3GPP_ARCH">
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+On the other hand, as mentioned earlier, ETSI TISPAN has developed its own architecture for QoS enforcement which is called Resource and Admission Control Subsystem (RACS) [#!etsi.282.003!#] and illustrated in Figure <A HREF="#fig:ETSIArch">2.3</A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:ETSIArch"></A><A NAME="112"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 2.3:</STRONG>
+ETSI TISPAN RACS Architecture</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="247" HEIGHT="188" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/ETSIArch.png"
+ ALT="Image ETSI_ARCH">
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+In order to merge these two architectural approaches into a common open source framework, BIQINI is heavily relying on advanced routing and traffic control tools provided by the open source operating system Linux, most notably several system tools which support IP traffic queueing configuration. A detailed description of routing, switching, bandwidth management, queuing and IP security functions in Linux systems can be found in [#!website:lartc!#], in the rest of this section we will only provide an in-depth view on the default Linux command-line application for queuing configuration which is called traffic control (tc) and supports the modification of the queuing strategies to be used for outgoing and incoming IP packets on specific network interfaces.
+
+<P>
+In tc, the different queuing types and -strategies are denoted as queuing disciplines. After setting up new queuing disciplines, IP packets must be assigned to certain queues using so-called filters which match the IP packets against specific patterns, corresponding to certain fields or byte sequences in the packet. Examples of these patterns include, e.g., source IP address, ports or any other field in the IP header. Upon successful match, the specific IP packet will be assigned to the corresponding queue. Note that a queuing discipline can, for instance, realize bandwidth management, reorder packets, delay packets, modify packets, etc., depending on the selected queuing discipline. A list of supported and implemented queuing algorithms can be found in [#!website:lartc!#].
+The BIQINI implementation combines several queueing disciplines to realize QoS enforcement. The classful Hierarchical Token Bucket (HTB) algorithm manages the reserved bandwidth by allocating requested bandwidth to microflows. The queuing discipline dsmark manipulates the DSCP field of IP packets, marking all IP packets queued in a specific dsmark queue using a specified DSCP value.
+
+<P>
+BIQINI uses the queuing discipline netem for implementing realistic access network emulation. The netem algorithm can delay, reorder, drop, and duplicate IP packets. By setting up several netem queuing disciplines, with different delay and loss values for distinct DSCP marking emulates a DiffServ network.
+
+<P>
+Finally, selective rejection or dropping of IP packets can be configured using the ipTables [#!website:netfilter!#] utility. A rule in ipTables describes traffic patterns and defines corresponding actions for this traffic, e.g., drop, reject, or accept. The traffic can be categorized by means of ports, addresses, protocol numbers, flags, etc. Similar to common firewalls, ipTables supports default rules for packets that cannot be matched to a rule. In most cases it is preferable to drop or reject all traffic that is not explicitly accepted by a rule.
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html90"
+  HREF="node4.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html86"
+  HREF="BIQINI.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html80"
+  HREF="node2.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html88"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html91"
+  HREF="node4.html">Architecture</A>
+<B> Up:</B> <A NAME="tex2html87"
+  HREF="BIQINI.html">BIQINI</A>
+<B> Previous:</B> <A NAME="tex2html81"
+  HREF="node2.html">Motivation</A>
+ &nbsp; <B>  <A NAME="tex2html89"
+  HREF="node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Christoph
+2010-06-02
+</ADDRESS>
+</BODY>
+</HTML>

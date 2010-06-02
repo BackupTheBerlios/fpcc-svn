@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Architecture</TITLE>
+<META NAME="description" CONTENT="Architecture">
+<META NAME="keywords" CONTENT="BIQINI">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="BIQINI.css">
+
+<LINK REL="next" HREF="node10.html">
+<LINK REL="previous" HREF="node3.html">
+<LINK REL="up" HREF="BIQINI.html">
+<LINK REL="next" HREF="node5.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html102"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html98"
+  HREF="BIQINI.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html92"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html100"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html103"
+  HREF="node5.html">Components</A>
+<B> Up:</B> <A NAME="tex2html99"
+  HREF="BIQINI.html">BIQINI</A>
+<B> Previous:</B> <A NAME="tex2html93"
+  HREF="node3.html">QoS Enforcement Architectures and</A>
+ &nbsp; <B>  <A NAME="tex2html101"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00400000000000000000">
+Architecture</A>
+</H1>
+The basic architecture of the BIQINI implementation is sketched in Figure <A HREF="#fig:BIQINIArch">3.1</A>. In the depicted scenario, the QoS enforcement is applied on an access link which on both ends is protected by respective PEPs. Whereas PEP 1 on the user side ensures that the micro-flow from the user agent to the core is scheduled correctly such that the service requirements (e.g. bandwidth) are fulfilled, PEP 2 on the core side is performing the same task for the opposite traffic direction. Note that, if PEP 1 were not installed, the user could use the access link excessively with other services, for instance sending extremely large emails or uploading huge amounts of data. Such bandwidth consuming services could then severely reduce the quality of realtime services like voice communication. Thus, PEP 1 ensures proper bandwidth usage in the uplink direction. This architecture is similar to [#!etsi.182.031!#] which covers a study of enforcing QoS on Customer Premise Networks (CPN) and supports the realistic asymmetrical modeling of impairments on access links.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:BIQINIArch"></A><A NAME="125"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3.1:</STRONG>
+Architecture of BIQINI QoS Enforcement for Access Links</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="247" HEIGHT="188" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/BIQINI_ARCH.png"
+ ALT="Image BIQINI_ARCH">
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+When no GGSN or DSLAM is available, the characteristics of a specific access network (e.g., ADSL or 3G) can be accurately emulated from the point of view of a layer 3 protocol with the NetEm instance depicted in Figure <A HREF="#fig:BIQINIArch">3.1</A> [#!jo:genericAccessEmu!#]. This is done by means of the Linux netem queueing discipline. In order to differentiate between different service classes, we also have installed a netem instance on the PEPs.
+To be more specific, a microflow of the class "realtime conversational" needs low delay values and loss rates. In this case, our PEP has to guarantee that the service receives the correct QoS on the access link. To realize this, the PEP has to mark the IP packets with the correct DSCP value corresponding to this service class. As an example, we suggest to use the DSCP class 0x03 for realtime conversations. Thus, both PEPs have to mark packets of this class with the DSCP value 0x03, and at the same time the netem at the access link has to assign packets with DSCP value 0x03 to the queueing system handling realtime conversation, which, on its part, must realize low delay values and loss rates. On the other hand, best effort traffic could receive for instance the DSCP marking 0x00, which causes netem to treat such IP packets with a delay of several hundreds of msec and loss rates of 2% and beyond.
+
+<P>
+In our overall QoS architecture, the PEPs are responsible for realizing bandwidth management. To this end, each incoming flow is shaped according to the installed rules. Flows that utilize too much bandwidth are queued at the PEP, thus increasing the corresponding delay value. In the worst case, this may lead to dropping the packets as soon as the queue is filled.
+
+<P>
+Our PEPs can be configured with or without ipTables (see section <A HREF="node19.html#subsect:PEP">4.3.2</A>). In the case of a configuration without ipTables, any traffic is admitted but marked at the PEP as best effort traffic. Therefore, netem treats this traffic with lowest quality. However, if services are enforced through the PDP, they are marked at the PEP with a different ("better") DSCP value and are treated with higher priority. Additionally, the PEP also ensures that the enforced services can utilize their required bandwidth.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:flowsetup"></A><A NAME="135"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3.2:</STRONG>
+Message Flow between AF, PDP and PEP</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="247" HEIGHT="188" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/MsgFlowSetup.png"
+ ALT="Image MsgFlowSetup">
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+The communication between AF, PDP and PEP is realized using the Diameter [#!rfc3588!#] protocol. More specifically, the AF utilizes AA-Requests (AAR) and AA Answer (AAA) messages over the Rx interface [#!3gpp.29.214!#] to transport authorization requests to the PDP, whereas the termination of a session is performed by a Session Termination Request (STR). The communication between PDP and PEP is realized over the Gx interface [#!3gpp.29.212!#] and uses Re-AuthRequests (RAR) and Re-Auth Answer (RAA) messages. Figure <A HREF="#fig:flowsetup">3.2</A> illustrates the Diameter messages employed.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html104"
+  HREF="node5.html">Components</A>
+<UL>
+<LI><A NAME="tex2html105"
+  HREF="node6.html">Policy Decision Point</A>
+<LI><A NAME="tex2html106"
+  HREF="node7.html">Policy Enforcement Point</A>
+<LI><A NAME="tex2html107"
+  HREF="node8.html">Application Function</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html108"
+  HREF="node9.html">Interaction</A>
+</UL>
+<!--End of Table of Child-Links-->
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html102"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html98"
+  HREF="BIQINI.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html92"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html100"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html103"
+  HREF="node5.html">Components</A>
+<B> Up:</B> <A NAME="tex2html99"
+  HREF="BIQINI.html">BIQINI</A>
+<B> Previous:</B> <A NAME="tex2html93"
+  HREF="node3.html">QoS Enforcement Architectures and</A>
+ &nbsp; <B>  <A NAME="tex2html101"
+  HREF="node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Christoph
+2010-06-02
+</ADDRESS>
+</BODY>
+</HTML>

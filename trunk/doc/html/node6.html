@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Policy Decision Point</TITLE>
+<META NAME="description" CONTENT="Policy Decision Point">
+<META NAME="keywords" CONTENT="BIQINI">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="BIQINI.css">
+
+<LINK REL="next" HREF="node7.html">
+<LINK REL="previous" HREF="node5.html">
+<LINK REL="up" HREF="node5.html">
+<LINK REL="next" HREF="node7.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html134"
+  HREF="node7.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html130"
+  HREF="node5.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html124"
+  HREF="node5.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html132"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html135"
+  HREF="node7.html">Policy Enforcement Point</A>
+<B> Up:</B> <A NAME="tex2html131"
+  HREF="node5.html">Components</A>
+<B> Previous:</B> <A NAME="tex2html125"
+  HREF="node5.html">Components</A>
+ &nbsp; <B>  <A NAME="tex2html133"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00411000000000000000">
+Policy Decision Point</A>
+</H2>
+		As already mentioned previously, the PDP is the specific component that is responsible for translating the media-specific data of a service request (like codec and media type) to QoS-specific parameters (like bandwidth and delay requirements). In order to realize this task, the PDP uses rules from an external rules repository which allow deriving the appropriate QoS parameters from service specific and user specific data.
+Our implementations of the Rx and Gx interfaces are based on the jDiameterPeer due to the Fraunhofer FOKUS group. On top of it we have built a basic logic which is able to handle incoming messages, to keep pointers to the corresponding state machines and to forward messages to the Rx and Gx interfaces. We have implemented the resulting state machine (depicted in Figure <A HREF="#fig:statemachine">3.3</A>) as well as "dummy" interfaces to a Subscription Policy Repository (SPR) which handles user and domain policies. Additionally, our implementation provides references to the PEP instances which have to be used for each subscriber.
+One of the main tasks of the PDP consists of mapping all requests to sessions, thus enabling the storage of a consistent state for each session. In this context, messages received by the Policy Decision Point (PDP) can be subdivided into preliminary service information messages and final service information messages. Whereas final service information messages install rules at the PEP, preliminary information messages only check if a requested service meets the corresponding policies and if there are enough resources available.
+The resulting state machine includes therefore the following set of states:
+
+<P>
+
+<UL>
+<LI>Receiving: waiting for incoming AAR message
+</LI>
+<LI>Accepted PRE: received a AAR with Service-Type AVP set to <BR>
+PRELIMINARY_SERVICE_INFORMATION
+</LI>
+<LI>Rejected: Service information received with not acceptable content (eitherdue to policy or insufficient resources)
+</LI>
+<LI>Accepted Final: received AAR with Service-Type AVP set to <BR>
+FINAL_SERVICE_INFORMATION
+</LI>
+<LI>Committed: enforcing the rules at the PEP successful
+</LI>
+<LI>Closing: received STR from the AF, trying to terminate session at the PEP
+</LI>
+<LI>Failed: enforcing the rules at the PEP failed
+</LI>
+<LI>Terminated: Session successfully terminated
+</LI>
+</UL>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:statemachine"></A><A NAME="151"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3.3:</STRONG>
+PDP State Machine</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="247" HEIGHT="188" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/StateMachine.png"
+ ALT="Image StateMachine">
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Note that in Figure <A HREF="#fig:statemachine">3.3</A>, a sequence of black arrows depicts the traversal through the states, if the initial request already contains the final service information and if the installing of the rules at the PEP works properly. Blue arrows indicate that the initial request contains only preliminary service information, and a second request is sent to install the rules at the PEP. Red arrows are used if either the request coming from the AF is not acceptable or the installation of rules at the PEP has failed. In order to maintain the clarity of presentation, the three states necessary for a session update are not shown in the diagram. Note that for each session handled at the PDP, a new state machine is created in order to deal with the corresponding messages.
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html134"
+  HREF="node7.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html130"
+  HREF="node5.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html124"
+  HREF="node5.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html132"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html135"
+  HREF="node7.html">Policy Enforcement Point</A>
+<B> Up:</B> <A NAME="tex2html131"
+  HREF="node5.html">Components</A>
+<B> Previous:</B> <A NAME="tex2html125"
+  HREF="node5.html">Components</A>
+ &nbsp; <B>  <A NAME="tex2html133"
+  HREF="node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Christoph
+2010-06-02
+</ADDRESS>
+</BODY>
+</HTML>

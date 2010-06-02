@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Policy Enforcement Point</TITLE>
+<META NAME="description" CONTENT="Policy Enforcement Point">
+<META NAME="keywords" CONTENT="BIQINI">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="BIQINI.css">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node5.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html146"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html142"
+  HREF="node5.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html136"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html144"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html147"
+  HREF="node8.html">Application Function</A>
+<B> Up:</B> <A NAME="tex2html143"
+  HREF="node5.html">Components</A>
+<B> Previous:</B> <A NAME="tex2html137"
+  HREF="node6.html">Policy Decision Point</A>
+ &nbsp; <B>  <A NAME="tex2html145"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00412000000000000000">
+Policy Enforcement Point</A>
+</H2>
+
+<P>
+The Policy Enforcement Point (PEP) is responsible for detecting microflows and processing them according to the configured QoS parameters. Both processes (detection and processing) are defined by rules which are received via the Gx interface from the PDP.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:pepcards"></A><A NAME="160"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figure 3.4:</STRONG>
+Interface Cards and Queueing at the PEP</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="320" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/PEPQueueing.png"
+ ALT="Image PEPQueueing">
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Our implementation is realized with Java, reusing the jDiameter stack already introduced. The detection and enforcement process is realized by Linux tools like tc and ipTables. The PEP stores the current state and configuration of each rule and tracks the bandwidth consumption in the PEP Rules Management module. For a comprehensive illustration of the main PEP components we refer to Figure <A HREF="#fig:pepcards">3.4</A>.
+
+<P>
+The PEP works an intermediate component between the communicating hosts. In order to be fully transparent for IP traffic, it is essential to configure the PEP as a bridge. With Linux, this requires two interface cards at the host, one towards the user agent and one towards the core network. The queueing is always realized at the sending interface, whereas QoS enforcement for traffic directed to the user agent can only be realized on the interface card towards the user agent (i.e. downlink). Similarly traffic directed to the core network can only be treated at the interface card towards the core network (i.e. uplink). In our implementation, we use the Linux system tool brctl to configure a Linux host with two interface cards as a bridge.
+Additionally, we have decided to reuse the concepts for installing, modifying and removing of rules by means of the Diameter protocol from the 3GPP PCC architecture, where these rules are called "charging rules" and include four main aspects:
+
+<P>
+
+<UL>
+<LI>Each rule has a unique identifier (Charging Rule Name), which is mainly necessary to be able to remove a certain rule.
+</LI>
+<LI>Each rule is responsible for a certain microflow characterized by a flow description using the following parameters: source IP address, destination port, destination IP address and protocol number. In the case of a bidirectional flow, two such flow descriptions are required.
+</LI>
+<LI>The third part of a rule contains QoS information which is described in terms of the guaranteed bitrate, the maximally requested bandwidth and the traffic class (like streaming, realtime conversational, etc.). The traffic class is used to set the DSCP value properly.
+</LI>
+<LI>The last part in the charging rule concerns charging information. As our implementation currently does not consider any charging aspects, any information contained in this part is ignored.
+</LI>
+</UL>
+Altogether, these four parts are encoded as so-called Charging Rule Definition AVPs, see Listing <A HREF="#lst:chargRuleDef">3.1</A>.
+<BR>
+<DIV ALIGN="CENTER"><A NAME="lst:chargRuleDef"></A><A NAME="160"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Listing 3.1:</STRONG>
+Example of a Charging Rule Definition</CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">
+<IMG
+  WIDTH="320" ALIGN="BOTTOM" BORDER="0"
+ SRC="images/ChargRuleDef.png"
+ ALT="Image ChargRulDef">
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+<BR>
+
+<P>
+After starting the PEP, some generic rules have to be installed first (for example signaling traffic should be able to pass under all circumstances). Such predefined rules are stored in the configuration file of the PEP and are activated automatically. As an alternative option, these rules can also be installed by a Charging Rule Command triggered by the PDP.
+After receiving an installation request via the Gx interface, the PEP has to configure the bandwidth management (realized with the HTB queueing discipline) and activate the firewall for the respective microflow. The rate and ceil parameters of the tc command are configured by the guaranteed bitrate and Max- Requested Bandwidth value of the QoS Information AVP, which has to be completed both for the uplink and downlink direction in the case of a bidirectional microflow. To realize DiffServ marking, we add a dsmark queueing discipline and configure a DSCP value that fits to the traffic class. In the next step, the firewall is informed by the ipTables command that this microflow has to be allowed to pass through. As mentioned before, it is also possible to run the PEP without gate blocking. By using the tc queuing system HTB, it is guaranteed that a certain microflow cannot exceed the reserved maximum requested bandwidth. If too much traffic should be injected into the network, the PEP will shape the traffic according to the installed rules. Additionally, the currently used bandwidth and the total amount of sent bytes are observed for each microflow. These data could be used in later releases to realize flow-based charging. Note that we do not use these data to infer a bearer loss, as individual services could generate traffic patterns with no data sent over a long period of time that would wrongly be detected as bearer loss.
+
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html146"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="icons/next.png"></A> 
+<A NAME="tex2html142"
+  HREF="node5.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="icons/up.png"></A> 
+<A NAME="tex2html136"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="icons/prev.png"></A> 
+<A NAME="tex2html144"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html147"
+  HREF="node8.html">Application Function</A>
+<B> Up:</B> <A NAME="tex2html143"
+  HREF="node5.html">Components</A>
+<B> Previous:</B> <A NAME="tex2html137"
+  HREF="node6.html">Policy Decision Point</A>
+ &nbsp; <B>  <A NAME="tex2html145"
+  HREF="node1.html">Contents</A></B> </DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+Christoph
+2010-06-02
+</ADDRESS>
+</BODY>
+</HTML>
